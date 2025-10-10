@@ -58,8 +58,8 @@ def predict_api():
         predict_pipeline = PredictPipeline()
         pred = predict_pipeline.predict(pred_df)
 
-        dct = {'price':round(pred[0],2)}
+        dct = {'price (in $)':round(pred[0],2)}
         return jsonify(dct)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0')

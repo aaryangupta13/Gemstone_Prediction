@@ -1,4 +1,4 @@
-# Gemstone Price Prediction - Utkarsh Gaikwad
+# Gemstone Price Prediction - Aaryan Gupta
 
 ### Introduction About the Data :
 
@@ -20,7 +20,7 @@ There are 10 independent variables (including `id`):
 * `x` : Diamond Z dimension
 
 Target variable:
-* `price`: Price of the given Diamond.
+* `price`: Price (in $) of the given Diamond.
 
 Dataset Source Link :
 [https://www.kaggle.com/competitions/playground-series-s3e8/data?select=train.csv](https://www.kaggle.com/competitions/playground-series-s3e8/data?select=train.csv)

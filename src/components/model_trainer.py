@@ -11,6 +11,7 @@ from sklearn.linear_model import LinearRegression, Ridge,Lasso
 from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
 from catboost import CatBoostRegressor
 from xgboost import XGBRegressor
+from sklearn.base import RegressorMixin
 from sklearn.ensemble import VotingRegressor
 from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 
@@ -127,10 +128,44 @@ class ModelTrainer:
             logging.info('Voting Regressor model training started')
 
             # Creating final Voting regressor
-            er = VotingRegressor([('cbr',best_cbr),('xgb',XGBRegressor()),('knn',best_knn)], weights=[3,2,1])
+            xgb = XGBRegressor(objective='reg:squarederror', n_jobs=-1, random_state=42)
+            
+            # Define a smaller, efficient search space
+            xgb_param_dist = {
+                'learning_rate': [0.01, 0.03, 0.05],
+                'max_depth': [4, 5, 6],
+                'n_estimators': [150, 200, 250, 300],
+                'subsample': [0.8, 1.0],
+                'colsample_bytree': [0.8, 1.0]
+            }
+
+            # Randomized search for faster tuning
+            xgb_rscv = RandomizedSearchCV(
+                estimator=xgb,
+                param_distributions=xgb_param_dist,
+                scoring='r2',
+                cv=3,             # smaller CV for speed
+                n_iter=10,        # test only 10 random combos
+                n_jobs=-1,
+                random_state=42
+            )
+
+            xgb_rscv.fit(xtrain, ytrain)
+
+            print(f'Best XGBoost Parameters : {xgb_rscv.best_params_}')
+            print(f'Best XGBoost Score : {xgb_rscv.best_score_}')
+            print('\n====================================================================================\n')
+
+            best_xgb = xgb_rscv.best_estimator_
+
+            er = VotingRegressor([('cbr',best_cbr),('xgb',best_xgb),('knn',best_knn)], weights=[3,2,1])
             er.fit(xtrain, ytrain)
+            
+            
             print('Final Model Evaluation :\n')
             print_evaluated_results(xtrain,ytrain,xtest,ytest,er)
+            
+            
             logging.info('Voting Regressor Training Completed')
 
             save_object(
@@ -152,6 +187,4 @@ class ModelTrainer:
         except Exception as e:
             logging.info('Exception occured at Model Training')
             raise CustomException(e,sys)
-
-
-
+        

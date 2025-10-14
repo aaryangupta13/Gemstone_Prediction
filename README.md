@@ -1,4 +1,4 @@
-# Gemstone Price Prediction - Aaryan Gupta
+# Gemstone Price Prediction
 
 ### Introduction About the Data :
 

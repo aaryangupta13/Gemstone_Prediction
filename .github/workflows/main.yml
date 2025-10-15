@@ -49,20 +49,38 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2.0.1
 
+      # ---- Cache Conda packages ----
+      - name: Cache Conda packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.conda/pkgs
+            ~/.conda/environments
+          key: ${{ runner.os }}-conda-${{ hashFiles('environment.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-conda-
+
+      # ---- Install Mamba for faster environment setup ----
+      - name: Install Mamba
+        run: |
+          conda install -n base -c conda-forge mamba -y
+
+      # ---- Set up Conda environment using Mamba ----
       - name: Set up Conda environment
         run: |
-          conda env update --file environment.yml --name base
+          mamba env update --file environment.yml --name base --quiet
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
           ECR_REGISTRY: ${{ secrets.AWS_ECR_LOGIN_URL }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
+          ECR_REPOSITORY: ${{ secrets.AWS_REPOSITORY_NAME }}
           IMAGE_TAG: latest
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
 
   Continuous-Deployment:
     name: Continuous Deployment
@@ -85,19 +103,19 @@ jobs:
 
       - name: Pull latest image from ECR
         run: |
-          docker pull ${{ secrets.AWS_ECR_LOGIN_URL }}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
+          docker pull ${{ secrets.AWS_ECR_LOGIN_URL }}/${{ secrets.AWS_REPOSITORY_NAME }}:latest
 
       - name: Stop and remove old container if running
         run: |
-          docker ps -q --filter "name=${{ secrets.ECR_REPOSITORY_NAME }}" | grep -q . && docker stop ${{ secrets.ECR_REPOSITORY_NAME }} && docker rm -fv ${{ secrets.ECR_REPOSITORY_NAME }} || true
+          docker ps -q --filter "name=${{ secrets.AWS_REPOSITORY_NAME }}" | grep -q . && docker stop ${{ secrets.AWS_REPOSITORY_NAME }} && docker rm -fv ${{ secrets.AWS_REPOSITORY_NAME }} || true
 
       - name: Run Docker Container
         run: |
-          docker run -d -p 5001:5001 --ipc="host" --name ${{ secrets.ECR_REPOSITORY_NAME }} \
+          docker run -d -p 5001:5001 --ipc="host" --name ${{ secrets.AWS_REPOSITORY_NAME }} \
           -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
           -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
           -e AWS_REGION=${{ secrets.AWS_REGION }} \
-          ${{ secrets.AWS_ECR_LOGIN_URL }}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
+          ${{ secrets.AWS_ECR_LOGIN_URL }}/${{ secrets.AWS_REPOSITORY_NAME }}:latest
 
       - name: Clean previous images and containers
         run: |

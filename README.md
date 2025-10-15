@@ -2,7 +2,7 @@
 
 ### Introduction About the Data :
 
-**The dataset** The goal is to predict `price` of given diamond (Regression Analysis).
+**The dataset** The goal is to predict `price` (in $) of given diamond (Regression Analysis).
 
 There are 10 independent variables (including `id`):
 

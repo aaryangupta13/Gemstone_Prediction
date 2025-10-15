@@ -2,8 +2,6 @@
 
 ### Introduction About the Data :
 
-Please this project is of a student. Just wanted to appreciate for knowledge sharing 
-
 **The dataset** The goal is to predict `price` of given diamond (Regression Analysis).
 
 There are 10 independent variables (including `id`):
@@ -29,27 +27,18 @@ Dataset Source Link :
 
 ### Check this link for details : [American Gem Society](https://www.americangemsociety.org/ags-diamond-grading-system/)
 
-<!-- # AWS Deployment Link : -->
+# AWS CI-CD Deployment Workflow Screenshot
 
-<!-- AWS Elastic Beanstalk link : [http://gemstonepriceutkarshgaikwad-env.eba-7zp3wapg.ap-south-1.elasticbeanstalk.com/](http://gemstonepriceutkarshgaikwad-env.eba-7zp3wapg.ap-south-1.elasticbeanstalk.com/) -->
+![AWS_CI-CD_Deployment_Workflow](./Screenshots/AWS_CI-CD_Deployment_Workflow.png)
 
-# Screenshot of UI
+# AWS Ubuntu CLI Deployment Status of the workflow Screenshot
 
-![HomepageUI](./Screenshots/HomepageUI.png)
+![AWS_Ubuntu_Deployment_Status](./Screenshots/AWS_Ubuntu_Deployment_Status.png)
 
-<!-- # YouTube Video Link -->
+# AWS Deployed App
 
-<!-- Link for YouTube Video : Click the below thumbnail to open  -->
+![AWS_Deployed_App](./Screenshots/AWS_Deployed_App.png)
 
-<!-- [![https://youtu.be/Xvk5r0t_RQw](https://i.ytimg.com/vi/Xvk5r0t_RQw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBbp5SouquUm3Y3t-NYfOYsg4N4oQ)](https://youtu.be/Xvk5r0t_RQw) -->
-
-<!-- # AWS API Link -->
-
-<!-- API Link : [http://gemstonepriceutkarshgaikwad-env.eba-7zp3wapg.ap-south-1.elasticbeanstalk.com/predictAPI](http://gemstonepriceutkarshgaikwad-env.eba-7zp3wapg.ap-south-1.elasticbeanstalk.com/predictAPI) -->
-
-<!-- # Postman Testing of API : -->
-
-<!-- ![API Prediction](./Screenshots/APIPrediction.jpg) -->
 
 # Approach for the project 
 
@@ -82,7 +71,3 @@ Link : [EDA Notebook](./notebook/1_EDA_Gemstone_price.ipynb)
 # Model Training Approach Notebook
 
 Link : [Model Training Notebook](./notebook/2_Model_Training_Gemstone.ipynb)
-
-# Model Interpretation with LIME 
-
-Link : [LIME Interpretation](./notebook/3_Explainability_with_LIME.ipynb)

@@ -12,9 +12,9 @@ dependencies:
   - jupyterlab
   - matplotlib
   - pandas
-  - pip
   - flask
   - flask_cors
   - dill
+  - pip
   - pip:
-    - catboost==1.2.5
+      - catboost==1.2.5

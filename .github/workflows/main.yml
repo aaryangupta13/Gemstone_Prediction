@@ -100,28 +100,34 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
-
+  
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v5.1.0
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
-
+  
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2.0.1
-
+  
       - name: Pull latest image from ECR
         run: |
           docker pull ${{ secrets.AWS_ECR_LOGIN_URL }}/${{ secrets.AWS_REPOSITORY_NAME }}:latest
-
-      - name: Stop and remove old container if running
+  
+      - name: Stop and remove old container if exists
         run: |
-          docker ps -q --filter "name=${{ secrets.AWS_REPOSITORY_NAME }}" | grep -q . && \
-          docker stop ${{ secrets.AWS_REPOSITORY_NAME }} && \
-          docker rm -fv ${{ secrets.AWS_REPOSITORY_NAME }} || true
-
+          CONTAINER_NAME=${{ secrets.AWS_REPOSITORY_NAME }}
+          EXISTING=$(docker ps -aq -f name=$CONTAINER_NAME)
+          if [ -n "$EXISTING" ]; then
+            echo "Stopping and removing existing container $CONTAINER_NAME"
+            docker stop $CONTAINER_NAME
+            docker rm -fv $CONTAINER_NAME
+          else
+            echo "No existing container named $CONTAINER_NAME"
+          fi
+  
       - name: Run Docker Container
         run: |
           docker run -d -p 5001:5001 --ipc="host" --name ${{ secrets.AWS_REPOSITORY_NAME }} \
@@ -129,6 +135,6 @@ jobs:
           -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
           -e AWS_REGION=${{ secrets.AWS_REGION }} \
           ${{ secrets.AWS_ECR_LOGIN_URL }}/${{ secrets.AWS_REPOSITORY_NAME }}:latest
-
+  
       - name: Clean previous images and containers
         run: docker system prune -f

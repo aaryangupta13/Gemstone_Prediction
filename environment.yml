@@ -2,7 +2,6 @@ name: gemstone_price_prediction_venv
 channels:
   - conda-forge
   - defaults
-channel_priority: strict
 dependencies:
   - python=3.10
   - numpy=1.26
@@ -15,6 +14,5 @@ dependencies:
   - flask
   - flask_cors
   - dill
-  - pip
   - pip:
       - catboost==1.2.5

@@ -49,16 +49,33 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2.0.1
 
-      # ---- Setup & Cache Conda Environment (Pure Conda Only) ----
-      - name: Setup Miniconda with caching (no mamba)
+      # ---- Cache Conda Packages ----
+      - name: Cache Conda packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.conda/pkgs
+            ~/.conda/envs/gemstone_price_prediction_venv
+          key: ${{ runner.os }}-conda-${{ hashFiles('environment.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-conda-
+
+      # ---- Setup Miniconda (pure Conda) ----
+      - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
-          activate-environment: gemstone_price_prediction_venv
-          environment-file: environment.yml
           auto-update-conda: true
-          use-mamba: false          # ✅ Pure Conda only
-          cache-downloads: true     # ✅ Cache pkg downloads
-          cache-env: true           # ✅ Cache full Conda environment
+          use-mamba: false
+
+      # ---- Create Conda Environment (CI-safe) ----
+      - name: Create/Update Conda Environment
+        run: |
+          if conda env list | grep -q "gemstone_price_prediction_venv"; then
+            echo "✅ Conda environment exists, skipping creation"
+          else
+            echo "⚙️ Creating Conda environment..."
+            conda env create --file environment.yml --name gemstone_price_prediction_venv
+          fi
 
       - name: Debug ECR variables
         run: |

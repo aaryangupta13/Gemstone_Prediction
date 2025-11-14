@@ -29,7 +29,7 @@ Dataset Source Link :
 
 # AWS Deployment Link :
 
-AWS EC2 Link : [Gemstone_Price_Prediction-EC2-Instance-Model-Link](http://13.60.173.221:5001)
+AWS EC2 Link : [Gemstone_Price_Prediction-EC2-Instance-Model-Link](http://13.62.199.75)
 
 # AWS CI-CD Deployment Workflow Screenshot
 
